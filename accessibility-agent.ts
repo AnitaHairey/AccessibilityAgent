@@ -140,7 +140,7 @@ Be decisive and focus on task completion! Avoid infinite loops.
 `;
 
       const response = await openai.chat.completions.create({
-        model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || "gpt-4o",  // 使用部署名称
+        model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || "gpt-4o", 
         messages: [
           {
             role: "system",
@@ -223,7 +223,7 @@ Be decisive and focus on task completion! Avoid infinite loops.
           await nvda.perform(nvda.keyboardCommands.activate);
           this.actionHistory.push(`Step ${this.stepCount + 1}: Activated current element`);
           console.log("⏳ Waiting for page response...");
-          await new Promise(resolve => setTimeout(resolve, 1000)); // 减少到1秒
+          await new Promise(resolve => setTimeout(resolve, 1000));
           break;
 
         case "type":
@@ -231,13 +231,13 @@ Be decisive and focus on task completion! Avoid infinite loops.
             await nvda.type(action.parameter);
             this.actionHistory.push(`Step ${this.stepCount + 1}: Typed "${action.parameter}"`);
             console.log("⏳ Waiting for typing to complete...");
-            await new Promise(resolve => setTimeout(resolve, 500)); // 减少到0.5秒
+            await new Promise(resolve => setTimeout(resolve, 500));
           }
           break;
 
         case "wait":
           console.log("⏳ Waiting for page to load...");
-          await new Promise(resolve => setTimeout(resolve, 1500)); // 减少到1.5秒
+          await new Promise(resolve => setTimeout(resolve, 1500));
           this.actionHistory.push(`Step ${this.stepCount + 1}: Waited for page load`);
           break;
 
@@ -268,19 +268,18 @@ Be decisive and focus on task completion! Avoid infinite loops.
           break;
       }
 
-      // 根据动作类型使用不同的延迟策略
-      let delayTime = 200; // 默认延迟
+      let delayTime = 200;
       
       switch (action.action) {
         case "next":
         case "previous":
-          delayTime = 100; // next/previous 动作更快
+          delayTime = 100;
           break;
         case "activate":
-          delayTime = 300; // activate 稍微长一点等待页面响应
+          delayTime = 300;
           break;
         case "type":
-          delayTime = 250; // type 动作中等延迟
+          delayTime = 250;
           break;
         default:
           delayTime = 200;
@@ -328,7 +327,7 @@ Be decisive and focus on task completion! Avoid infinite loops.
       try {
         await execAsync(`start chrome "${targetUrl}"`);
         console.log("Page opened, waiting for load...");
-        await new Promise(resolve => setTimeout(resolve, 2000)); // 从4秒减少到2秒
+        await new Promise(resolve => setTimeout(resolve, 2000));
       } catch (browserError) {
         console.log("⚠️ Could not auto-open browser. Please open manually and press Enter to continue.");
         
@@ -459,7 +458,7 @@ Focus on concrete results and be honest about the level of success.
 `;
 
       const response = await openai.chat.completions.create({
-        model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || "gpt-4o",  // 使用部署名称
+        model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || "gpt-4o",
         messages: [
           {
             role: "system",

@@ -43,14 +43,6 @@ npm run web           # Manual web navigation demo
 npm run agent         # Complete web navigation agent
 ```
 
-### Weather Search Agents
-```bash
-npm run search        # Simple weather search
-npm run weather       # Smart weather search with keyword matching
-npm run pattern       # Advanced pattern-based weather analysis (no API key)
-npm run ai            # AI-powered weather analysis (requires OpenAI API key)
-```
-
 ## AI-Powered Weather Analysis
 
 ### Option 1: OpenAI Integration (Recommended)
@@ -64,7 +56,7 @@ OPENAI_API_KEY=your_actual_api_key_here
 ```
 3. **Run AI Agent**:
 ```bash
-npm run ai
+npm run agent
 ```
 
 **Features:**
@@ -74,79 +66,6 @@ npm run ai
 - 🧠 Context-aware analysis
 - 📈 Confidence scoring
 
-### Option 2: Smart Pattern Matching (No API Required)
-
-```bash
-npm run pattern
-```
-
-**Features:**
-- 🔍 Advanced regex pattern matching
-- 📊 Confidence scoring (0-100%)
-- 🎯 Weather-specific keyword detection
-- ⚡ Fast, local analysis
-- 📈 Multi-element result ranking
-
-## How It Works
-
-### Traditional Approach (Basic)
-```typescript
-// Simple string matching
-if (element.includes("weather") || element.includes("temperature")) {
-    console.log("Found weather info!");
-}
-```
-
-### AI-Powered Approach
-```typescript
-// Intelligent analysis with context understanding
-const weatherInfo = await analyzeWeatherContent(element);
-if (weatherInfo.hasWeather) {
-    console.log(`Temperature: ${weatherInfo.temperature}`);
-    console.log(`Condition: ${weatherInfo.condition}`);
-    console.log(`Location: ${weatherInfo.location}`);
-}
-```
-
-### Smart Pattern Approach
-```typescript
-// Advanced pattern matching with confidence scoring
-const weatherInfo = analyzeWeatherContentLocal(element);
-if (weatherInfo.confidence >= 40) {
-    console.log(`Weather detected with ${weatherInfo.confidence}% confidence`);
-    console.log(weatherInfo.extractedData);
-}
-```
-
-## Sample Output
-
-### AI Analysis Result:
-```
-🌤️  AI DETECTED WEATHER INFORMATION!
-==================================================
-📍 Location: Beijing
-🌡️  Temperature: 25°C
-☁️  Condition: Partly cloudy
-💧 Humidity: 60%
-💨 Wind Speed: 15 km/h
-📅 Forecast: Sunny tomorrow
-📝 Summary: Current weather conditions for Beijing with detailed forecast
-==================================================
-```
-
-### Smart Pattern Result:
-```
-🌤️  WEATHER DETECTED! (Confidence: 85%)
-==================================================
-📊 Extracted Data:
-🌡️  Temperature: 25°C
-☁️  Condition: partly cloudy
-📍 Location: beijing
-💧 Humidity: 60%
-💨 Wind: 15 km/h
-📝 Analysis: Weather information detected with 85% confidence...
-==================================================
-```
 
 ## NVDA Web Navigation Shortcuts
 
@@ -167,11 +86,8 @@ When using NVDA on webpages, here are common navigation shortcuts:
 
 ## Project Structure
 
-- `example.ts` - Basic NVDA operation example
-- `web-agent.ts` - Complete web navigation agent
-- `smart-weather-agent.ts` - Intelligent weather search agent
-- `web-navigation.ts` - Manual web navigation demo
-- `web-focus.ts` - Web focus-specific script
+- `accessibility-agent.ts` - Main agent logic
+- `web-focus.ts` - Demo
 
 ## Notes
 
