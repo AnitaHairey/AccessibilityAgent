@@ -1,0 +1,17 @@
+{
+  "type": "module",
+  "scripts": {
+    "agent": "tsx nvda-agent.ts",
+    "demo": "tsx web-focus.ts"
+  },
+  "dependencies": {
+    "@guidepup/guidepup": "^0.24.0",
+    "dotenv": "^17.2.0",
+    "openai": "^5.9.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}
