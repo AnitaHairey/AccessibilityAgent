@@ -1,8 +1,16 @@
 {
+  "name": "accessibility-agent",
+  "version": "2.0.0",
+  "description": "智能无障碍代理 - 规划与执行分离的架构",
   "type": "module",
+  "main": "main-agent.ts",
   "scripts": {
-    "agent": "tsx nvda-agent.ts",
-    "demo": "tsx web-focus.ts"
+    "start": "tsx main-agent.ts",
+    "interactive": "tsx main-agent.ts --interactive",
+    "test-arch": "tsx test-architecture.ts",
+    "legacy": "tsx accessibility-agent.ts",
+    "demo": "tsx web-focus.ts",
+    "test": "tsx test-api.ts"
   },
   "dependencies": {
     "@guidepup/guidepup": "^0.24.0",

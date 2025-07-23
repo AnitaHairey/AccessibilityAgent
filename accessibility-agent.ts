@@ -19,11 +19,9 @@ const openai = new AzureOpenAI({
 });
 
 interface ActionPlan {
-  action: "next" | "previous" | "activate" | "type" | "wait" | "complete" | "failed" | "back" | "refresh";
+  action: "next" | "previous" | "activate" | "type" | "wait" | "complete" | "failed";
   parameter?: string;
   reasoning: string;
-  confidence: number; // 0-100
-  taskProgress: number; // 0-100
   nextStrategy?: string;
 }
 
@@ -37,7 +35,7 @@ interface TaskResult {
 
 class FlexibleTaskAgent {
   private stepCount: number = 0;
-  private maxSteps: number = 50;
+  private maxSteps: number = 20;
   private taskDescription: string = "";
   private actionHistory: string[] = [];
   private contextMemory: string[] = [];
@@ -98,41 +96,14 @@ AVAILABLE ACTIONS:
 - "activate": Click/activate current element (nvda.perform(nvda.keyboardCommands.activate))
 - "type": Type text (provide text in parameter)
 - "wait": Wait briefly for page to load
-- "back": Go back in browser
-- "refresh": Refresh current page
 - "complete": Task is successfully completed
 - "failed": Task cannot be completed
-
-INTELLIGENT DECISION RULES:
-1. If element is repeated and we're not making progress → try different action or declare failed
-2. If current content contains input field/search box → use "type" action with relevant query
-3. If current content is a button/link that matches task goal → use "activate" action
-4. If current content is navigation/menu relevant to task → use "activate" action
-5. If current content is irrelevant but new → use "next" to continue exploring
-6. If found information that completes the task → use "complete" action
-7. If stuck in loops or no progress → use "back" or "refresh" or "failed"
-
-TASK-SPECIFIC STRATEGIES:
-- Weather search: Look for search boxes, weather sites, temperature/condition info
-- Shopping: Look for product search, categories, prices, "add to cart" buttons
-- News: Look for headlines, articles, news categories
-- Navigation: Look for menus, links, navigation elements
-- Information search: Look for relevant content, search functionality
-
-PROGRESS ASSESSMENT:
-- 0-20%: Initial exploration, finding main navigation
-- 20-40%: Located relevant section/search functionality
-- 40-60%: Entering queries or navigating to content
-- 60-80%: Processing results or navigating to specific items
-- 80-100%: Found target information or completed action
 
 Please respond with a JSON object:
 {
   "action": "next|previous|activate|type|wait|back|refresh|complete|failed",
   "parameter": "text to type if action is type",
   "reasoning": "detailed explanation of why this action was chosen",
-  "confidence": 85,
-  "taskProgress": 45,
   "nextStrategy": "brief description of what the next few steps should accomplish"
 }
 
@@ -169,9 +140,7 @@ Be decisive and focus on task completion! Avoid infinite loops.
       console.error("Error getting AI decision:", error);
       return {
         action: "next",
-        reasoning: `Error in AI decision making: ${error}. Continuing with next.`,
-        confidence: 10,
-        taskProgress: this.stepCount / this.maxSteps * 100
+        reasoning: `Error in AI decision making: ${error}. Continuing with next.`
       };
     }
   }
@@ -180,8 +149,6 @@ Be decisive and focus on task completion! Avoid infinite loops.
     try {
       console.log(`\n🎯 Step ${this.stepCount + 1}: ${action.action.toUpperCase()}`);
       console.log(`💭 Reasoning: ${action.reasoning}`);
-      console.log(`🎯 Confidence: ${action.confidence}%`);
-      console.log(`📊 Task Progress: ${action.taskProgress}%`);
       if (action.nextStrategy) {
         console.log(`🔮 Next Strategy: ${action.nextStrategy}`);
       }
@@ -239,20 +206,6 @@ Be decisive and focus on task completion! Avoid infinite loops.
           console.log("⏳ Waiting for page to load...");
           await new Promise(resolve => setTimeout(resolve, 1500));
           this.actionHistory.push(`Step ${this.stepCount + 1}: Waited for page load`);
-          break;
-
-        case "back":
-          // Skip back functionality for now
-          console.log("⚠️ Back functionality not implemented, continuing with next");
-          await nvda.next();
-          this.actionHistory.push(`Step ${this.stepCount + 1}: Attempted back, moved to next instead`);
-          break;
-
-        case "refresh":
-          // Skip refresh functionality for now
-          console.log("⚠️ Refresh functionality not implemented, continuing with next");
-          await nvda.next();
-          this.actionHistory.push(`Step ${this.stepCount + 1}: Attempted refresh, moved to next instead`);
           break;
 
         case "complete":
@@ -347,7 +300,6 @@ Be decisive and focus on task completion! Avoid infinite loops.
       console.log("\n🚀 Starting intelligent task execution...");
 
       // Main execution loop
-      let consecutiveNextActions = 0;
       let isTaskComplete = false;
 
       while (this.stepCount < this.maxSteps && !isTaskComplete) {
@@ -373,29 +325,8 @@ Be decisive and focus on task completion! Avoid infinite loops.
         console.log("🧠 AI is analyzing and deciding next action...");
         const actionPlan = await this.decideNextAction(currentContent, this.stepCount + 1);
 
-        // Track consecutive "next" actions to detect loops
-        if (actionPlan.action === "next") {
-          consecutiveNextActions++;
-        } else {
-          consecutiveNextActions = 0;
-        }
-
-        // If too many consecutive next actions, force a different strategy
-        if (consecutiveNextActions > 8) {
-          console.log("⚠️ Too many consecutive 'next' actions. Forcing different strategy...");
-          actionPlan.action = "back";
-          actionPlan.reasoning = "Breaking out of potential navigation loop";
-          consecutiveNextActions = 0;
-        }
-
         // Execute the action
         isTaskComplete = await this.executeAction(actionPlan);
-
-        // Emergency exit if we detect we're completely stuck
-        if (this.stepCount > 30 && actionPlan.taskProgress < 20) {
-          console.log("⚠️ Task seems stuck with low progress. Continuing with next action...");
-          // Just continue with the planned action
-        }
       }
 
       // Extract final result
